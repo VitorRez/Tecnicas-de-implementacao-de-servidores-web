@@ -8,10 +8,10 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-#define PORT 8080
+#define PORT 8002
 #define MAX_THREADS 4
 #define FILE_PATH "file.txt"
-#define IMAGE_PATH "image.png"
+#define IMAGE_PATH "image.jpg"
 
 typedef struct tasknode{
     int client_socket;
@@ -90,8 +90,8 @@ void handle_client(int client_socket) {
 
         if (strstr(buffer, "GET /file.txt") != NULL) {
             serve_file(client_socket, FILE_PATH, "text/plain");
-        } else if (strstr(buffer, "GET /image.png") != NULL) {
-            serve_file(client_socket, IMAGE_PATH, "image/png");
+        } else if (strstr(buffer, "GET /image.jpg") != NULL) {
+            serve_file(client_socket, IMAGE_PATH, "image/jpg");
         } else {
             char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello, World!";
             send(client_socket, response, strlen(response), 0);
@@ -120,11 +120,13 @@ int main(){
     int server_fd, new_socket;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
+    int option = 1;
 
     if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
         handle_error("Falha ao criar o socket");
-        exit(EXIT_FAILURE);
     }
+
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
@@ -134,6 +136,7 @@ int main(){
         handle_error("Falha ao fazer o bind");
         exit(EXIT_FAILURE);
     }
+    
 
     if(listen(server_fd, 3) == -1){
         handle_error("Falha ao escutar");

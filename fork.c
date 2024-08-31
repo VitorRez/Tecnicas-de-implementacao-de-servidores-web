@@ -8,9 +8,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define PORT 8080
+#define PORT 8001
 #define FILE_PATH "file.txt"
-#define IMAGE_PATH "image.png"
+#define IMAGE_PATH "image.jpg"
 
 void handle_error(const char* msg){
     perror(msg);
@@ -50,8 +50,8 @@ void handle_client(int client_socket) {
 
         if (strstr(buffer, "GET /file.txt") != NULL) {
             serve_file(client_socket, FILE_PATH, "text/plain");
-        } else if (strstr(buffer, "GET /image.png") != NULL) {
-            serve_file(client_socket, IMAGE_PATH, "image/png");
+        } else if (strstr(buffer, "GET /image.jpg") != NULL) {
+            serve_file(client_socket, IMAGE_PATH, "image/jpg");
         } else {
             char *response = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello, World!";
             send(client_socket, response, strlen(response), 0);
@@ -66,10 +66,13 @@ int main(){
     int server_fd, new_socket;
     struct sockaddr_in address;
     int adrlen = sizeof(address);
+    int option = 1;
 
     if((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
         handle_error("Falha ao criar o socket");
     }
+
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;

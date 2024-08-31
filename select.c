@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-#define PORT 8080
+#define PORT 8003
 #define MAX_CLIENTS 5
 #define FILE_PATH "file.txt"
 #define IMAGE_PATH "image.jpg"
@@ -61,8 +61,8 @@ void handle_client(int client_socket) {
 
         if (strstr(buffer, "GET /file.txt") != NULL) {
             serve_file(client_socket, FILE_PATH, "text/plain");
-        } else if (strstr(buffer, "GET /image.png") != NULL) {
-            serve_file(client_socket, IMAGE_PATH, "image/png");
+        } else if (strstr(buffer, "GET /image.jpg") != NULL) {
+            serve_file(client_socket, IMAGE_PATH, "image/jpg");
         } else if (strstr(buffer, "CHAT:") != NULL){
             handle_chat(client_socket, buffer);
         } else {
@@ -81,6 +81,7 @@ int main(){
     struct sockaddr_in address;
     int addrlen = sizeof(address);
     int fdmax, activity, new_socket;
+    int option = 1;
 
     for (int i = 0; i < MAX_CLIENTS; i++) {
         client_sockets[i] = 0;
@@ -92,6 +93,14 @@ int main(){
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
+
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd == -1) {
+        perror("Falha ao criar o socket");
+        exit(EXIT_FAILURE);
+    }
+
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
 
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("Falha ao fazer o bind");

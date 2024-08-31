@@ -1,0 +1,60 @@
+testes
+tempo de acesso = 5s
+dado utilizado = longest transaction e availability (a partir do fork, antes disso considere 100% para todos as execuções)
+
+iterativo
+
+*para testes de imagem acima de 64 clientes o servidor fechava a cada teste
+*o máximo de clientes que o siege suporta são 255, por isso o ultimo teste foi feito com esse valor (se aplica a todos os testes).
+*mensagem de erro:
+
+================================================================
+WARNING: The number of users is capped at 255.  To increase this
+         limit, search your .siegerc file for 'limit' and change
+         its value. Make sure you read the instructions there...
+================================================================
+
+             |         teste 1          ||         teste 2          ||         teste 3          |
+num_clientes | padrão | imagem | texto  || padrão | imagem | texto  || padrão | imagem | texto  |
+16           | 1.21   | 2.04   | 2.28   || 1.44   | 2.06   | 2.45   || 3.05   | 2.26   | 3.26   |
+32           | 2.88   | 4.36   | 2.72   || 3.07   | 2.71   | 4.38   || 4.10   | 2.71   | 4.11   |
+64           | 4.35   | 4.33   | 2.89   || 4.51   | 3.91   | 4.91   || 4.75   | 2.96   | 4.36   |
+128          | 4.34   | 4.39   | 3.06   || 3.98   | 4.55   | 4.30   || 3.97   | 4.34   | 3.91   |
+255          | 3.74   | 2.86   | 4.55   || 4.37   | 4.29   | 4.36   || 4.39   | 3.93   | 3.94   |
+
+fork
+
+*Nesse teste os servidores são fechados a cada iteração
+*Além disso, aqui são avaliados dois valores, o primeiro representa o tempo da transação mais longa, ja o segundo representa a disponibilidade,
+*visto que em alguns casos podem ocorrer falhas ao criar processos filhos
+*Mensagem de erro:
+
+Falha ao criar o processo filho: Resource temporarily unavailable
+
+             |                teste 1                     ||                teste 2                     ||                teste 3                     |
+num_clientes | padrão       | imagem       | texto        || padrão       | imagem       | texto        || padrão       | imagem       | texto        |
+16           | 3.28, 100.00 | 2.09, 100.00 | 3.88, 100.00 || 2.25, 098.12 | 1.43, 100.00 | 2.42, 094.08 || 2.29, 094.10 | 2.24, 094.08 | 1.88, 094.06 |
+32           | 2.72, 100.00 | 3.07, 100.00 | 3.75, 100.00 || 2.85, 093.98 | 2.70, 094.08 | 2.72, 100.00 || 2.50, 100.00 | 4.34, 100.00 | 2.67, 100.00 |
+64           | 2.68, 098.46 | 3.71, 093.99 | 4.34, 100.00 || 3.52, 100.00 | 3.52, 100.00 | 4.35, 100.00 || 2.68, 100.00 | 3.76, 100.00 | 4.13, 099.62 |
+128          | 4.08, 100.00 | 4.75, 100.00 | 3.92, 100.00 || 4.02, 100.00 | 3.32, 100.00 | 2.70, 100.00 || 3.70, 093.82 | 4.35, 100.00 | 4.14, 100.00 |
+255          | 4.37, 100.00 | 4.39, 100.00 | 3.93, 100.00 || 3.93, 100.00 | 4.36, 100.00 | 4.38, 093.88 || 4.39, 093.83 | 4.38, 100.00 | 4.37, 100.00 |
+
+threads com fila
+
+             |                teste 1                     ||                teste 2                     ||                teste 3                     |
+num_clientes | padrão       | imagem       | texto        || padrão       | imagem       | texto        || padrão       | imagem       | texto        |
+16           | 1.42, 100.00 | 2.08, 100.00 | 2.07, 100.00 || 1.27, 100.00 | 1.06, 100.00 | 1.24, 100.00 || 2.08, 100.00 | 2.08, 100.00 | 2.09, 100.00 |
+32           | 2.06, 100.00 | 1.84, 100.00 | 1.44, 100.00 || 2.04, 100.00 | 4.36, 100.00 | 1.44, 100.00 || 3.08, 100.00 | 4.33, 100.00 | 2.04, 100.00 |
+64           | 4.39, 100.00 | 2.79, 100.00 | 3.27, 100.00 || 2.68, 100.00 | 3.06, 100.00 | 4.38, 100.00 || 2.05, 100.00 | 4.33, 100.00 | 2.91, 100.00 |
+128          | 4.45, 100.00 | 2.79, 100.00 | 3.70, 100.00 || 3.07, 100.00 | 4.36, 100.00 | 4.75, 100.00 || 2.72, 100.00 | 4.13, 100.00 | 4.53, 100.00 |
+255          | 4.76, 100.00 | 4.14, 100.00 | 3.76, 100.00 || 3.94, 100.00 | 4.38, 100.00 | 4.55, 100.00 || 4.38, 100.00 | 4.39, 100.00 | 4.37, 100.00 |
+
+select
+
+             |                teste 1                     ||                teste 2                     ||                teste 3                     |
+num_clientes | padrão       | imagem       | texto        || padrão       | imagem       | texto        || padrão       | imagem       | texto        |
+16           | 0.008, 100.0 | 1.00, 100.00 | 1.01, 100.00 || 1.00, 100.00 | 1.00, 100.00 | 1.06, 100.00 || 0.001, 100.0 | 1.05, 100.00 | 1.03, 100.00 |
+32           | 1.02, 100.00 | 1.25, 100.00 | 1.27, 100.00 || 1.06, 100.00 | 1.05, 100.00 | 1.05, 100.00 || 1.05, 100.00 | 1.26, 100.00 | 2.08, 100.00 |
+64           | 1.28, 100.00 | 2.30, 100.00 | 1.26, 100.00 || 1.04, 100.00 | 1.45, 100.00 | 1.27, 100.00 || 1.03, 100.00 | 2.09, 100.00 | 2.09, 100.00 |
+128          | 1.04, 100.00 | 3.32, 100.00 | 2.04, 100.00 || 1.05, 100.00 | 4.42, 100.00 | 1.48, 100.00 || 1.27, 100.00 | 4.38, 100.00 | 2.08, 100.00 |
+255          | 1.06, 100.00 | 3.13, 100.00 | 2.26, 100.00 || 2.28, 100.00 | 3.31, 100.00 | 4.46, 100.00 || 2.71, 100.00 | 4.38, 100.00 | 3.77, 100.00 |
